@@ -1,0 +1,29 @@
+# Runtime parameters, loaded and passed to the graph as Graph(config=...).
+# Separate from config/agent.yaml, which carries deployment identity only.
+#
+# Every value below is read at runtime — the entry point loads this file, and
+# each domain node reads its own thresholds from it. A key with no reader does
+# not belong here: this agent invokes no model, so no prompt is declared.
+
+max_retry: 3
+timeout_s: 30
+
+fin_c2_064:
+  # Transactions per window above which the velocity signal is raised.
+  velocity_window_max: 5
+  # Transaction amount above which the high-value signal is raised.
+  high_amount_threshold: 1000.0
+
+  # Weight contributed by each raised signal. The four sum to 1.0, so an event
+  # raising every signal scores exactly 1.0.
+  signal_weights:
+    velocity_exceeded: 0.30
+    geo_mismatch: 0.30
+    new_device: 0.20
+    high_amount: 0.20
+
+  # Inclusive lower bound of each severity band; below MEDIUM the alert is LOW.
+  severity_thresholds:
+    CRITICAL: 0.85
+    HIGH: 0.60
+    MEDIUM: 0.30
